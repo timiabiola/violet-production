@@ -184,66 +184,27 @@ export const jsonToQueryString = (json: SerializableRecord): string => {
 };
 
 export const sendToWebhook = async (data: SerializableRecord): Promise<AgentResponse> => {
-  // Use the configured webhook URL from environment
-  const proxyUrl = import.meta.env.VITE_N8N_PROXY_URL || null;
-  const baseUrl = proxyUrl ||
-    import.meta.env.VITE_SUPABASE_URL ||
-    'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31';
-  const authHeaderName = import.meta.env.VITE_N8N_AUTH_HEADER_NAME || 'Authorization';
-  const authHeaderValue =
-    import.meta.env.VITE_N8N_AUTH_HEADER_VALUE ?? import.meta.env.VITE_N8N_AUTH_TOKEN;
-
-  const queryString = jsonToQueryString(data);
-  const webhookUrl = queryString
-    ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}${queryString}`
-    : baseUrl;
-
-  console.log('Sending to webhook:', {
-    url: webhookUrl,
-    usingProxy: !!proxyUrl,
-    authHeaderName: authHeaderValue ? authHeaderName : 'NOT SET',
-    hasAuth: !!authHeaderValue,
-    data
-  });
+  const webhookUrl = `https://n8n.enlightenedmediacollective.com/webhook-test/8e680e60-73fa-4761-920e-ad07b213ab31?${jsonToQueryString(data)}`;
 
   try {
-    const headers: Record<string, string> = {
-      'Accept': 'application/json',
-    };
-
-    // Add authorization header if available and not proxied
-    if (!proxyUrl && authHeaderValue) {
-      headers[authHeaderName] = authHeaderValue;
-    }
-
-    const response = await fetch(webhookUrl, {
+    await fetch(webhookUrl, {
       method: 'GET',
-      headers,
-      mode: 'cors', // Changed from 'no-cors' to 'cors' to allow reading response
+      headers: {
+        Accept: 'application/json',
+      },
+      mode: 'no-cors',
     });
-
-    console.log('Webhook response:', {
-      status: response.status,
-      statusText: response.statusText
-    });
-
-    if (!response.ok) {
-      throw new Error(`Webhook responded with ${response.status}: ${response.statusText}`);
-    }
-
-    const responseText = await response.text();
-    console.log('Webhook response body:', responseText);
 
     return {
       output: 'Success',
-      reply: 'Thank you! Your review request has been sent successfully.',
+      reply: 'Thank you for your submission!',
     };
   } catch (error) {
     console.error('Error sending data to webhook:', error);
 
     return {
       output: 'Local Success',
-      reply: "Your request was saved locally. We'll process it shortly.",
+      reply: "Your request was saved locally. We'll try to submit it again later.",
     };
   }
 };

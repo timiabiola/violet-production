@@ -183,56 +183,47 @@ const SessionForm: React.FC<SessionFormProps> = ({ onFormSuccess }) => {
       await persistSessionPayload(session.session_uuid, payload);
       storeSessionMetadataLocally(payload);
 
-      // Skip database operations when using n8n webhook
-      // The n8n workflow will handle data storage
-      const isN8nWebhook = import.meta.env.VITE_SUPABASE_URL?.includes('n8n') ||
-                           import.meta.env.VITE_SUPABASE_URL?.includes('webhook');
+      try {
+        const reviewRequestInsert: Record<string, unknown> = {
+          patient_name: sanitizedFormData.clientFirstName,
+          phone_number: sanitizedFormData.phoneNumber,
+          created_by: user.id,
+          unique_key: session.session_uuid,
+          status: "sent",
+          sent_at: new Date().toISOString(),
+        };
 
-      if (!isN8nWebhook) {
-        try {
-          const reviewRequestInsert: Record<string, unknown> = {
-            patient_name: sanitizedFormData.clientFirstName,
-            phone_number: sanitizedFormData.phoneNumber,
-            created_by: user.id,
-            unique_key: session.session_uuid,
-            status: "sent",
-            sent_at: new Date().toISOString(),
-          };
-
-          if (profileSettings.clinicMode && selectedProvider?.name) {
-            reviewRequestInsert.physician_name = selectedProvider.name;
-          }
-
-          const { error: reviewRequestError } = await supabase
-            .from("review_requests")
-            .insert(reviewRequestInsert);
-
-          if (reviewRequestError) {
-            console.error("Failed to track review request:", reviewRequestError);
-          }
-
-          const analyticsPayload = {
-            user_id: user.id,
-            event: "review_request_sent",
-            metadata: {
-              clinic_mode: profileSettings.clinicMode,
-              provider: selectedProvider?.name ?? null,
-              has_google_url: !!profileSettings.googleReviewUrl,
-            },
-          };
-
-          const { error: analyticsError } = await supabase
-            .from("analytics")
-            .insert(analyticsPayload);
-
-          if (analyticsError) {
-            console.error("Analytics tracking error:", analyticsError);
-          }
-        } catch (error) {
-          console.error("Database operation error:", error);
+        if (profileSettings.clinicMode && selectedProvider?.name) {
+          reviewRequestInsert.physician_name = selectedProvider.name;
         }
-      } else {
-        console.log("Using n8n webhook - skipping direct database operations");
+
+        const { error: reviewRequestError } = await supabase
+          .from("review_requests")
+          .insert(reviewRequestInsert);
+
+        if (reviewRequestError) {
+          console.error("Failed to track review request:", reviewRequestError);
+        }
+
+        const analyticsPayload = {
+          user_id: user.id,
+          event: "review_request_sent",
+          metadata: {
+            clinic_mode: profileSettings.clinicMode,
+            provider: selectedProvider?.name ?? null,
+            has_google_url: !!profileSettings.googleReviewUrl,
+          },
+        };
+
+        const { error: analyticsError } = await supabase
+          .from("analytics")
+          .insert(analyticsPayload);
+
+        if (analyticsError) {
+          console.error("Analytics tracking error:", analyticsError);
+        }
+      } catch (error) {
+        console.error("Analytics tracking error:", error);
       }
 
       try {
