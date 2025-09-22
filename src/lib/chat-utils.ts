@@ -184,14 +184,24 @@ export const jsonToQueryString = (json: SerializableRecord): string => {
 };
 
 export const sendToWebhook = async (data: SerializableRecord): Promise<AgentResponse> => {
-  const webhookUrl = `https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31?${jsonToQueryString(data)}`;
+  const n8nWebhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31';
+  const authHeaderName = import.meta.env.VITE_N8N_AUTH_HEADER_NAME || 'Authorization';
+  const authHeaderValue = import.meta.env.VITE_N8N_AUTH_HEADER_VALUE || 'sivjir-jahmo4-Wibgor';
+
+  const webhookUrl = `${n8nWebhookUrl}?${jsonToQueryString(data)}`;
 
   try {
+    const headers: Record<string, string> = {
+      'Accept': 'application/json',
+    };
+
+    if (authHeaderName && authHeaderValue) {
+      headers[authHeaderName] = authHeaderValue;
+    }
+
     await fetch(webhookUrl, {
       method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
+      headers,
       mode: 'no-cors',
     });
 
