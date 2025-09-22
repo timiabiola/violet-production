@@ -19,7 +19,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ onClearChat, sessionData }) => 
     <div className="flex items-center justify-between p-4 glass rounded-lg mb-4">
       <div className="flex flex-col">
         <h2 className="text-lg font-semibold text-gradient">
-          Chat with {sessionData?.clinicMode ? (sessionData?.providerName || 'Your Provider') : 'Your Clinic'}
+          Chat with {sessionData?.clinicMode ? (sessionData?.providerName || 'Your Provider') : 'Your Business'}
         </h2>
         {sessionData && (
           <p className="text-xs text-foreground/70">

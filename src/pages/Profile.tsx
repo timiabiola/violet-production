@@ -280,7 +280,7 @@ const Profile = () => {
             <Card>
               <CardHeader>
                 <CardTitle>Profile Information</CardTitle>
-                <CardDescription>Manage your clinic settings and provider mode</CardDescription>
+                <CardDescription>Manage your business settings and clinic mode</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleProfileUpdate} className="space-y-4">
@@ -327,7 +327,7 @@ const Profile = () => {
                     <Label htmlFor="provider-mode">Clinic Mode</Label>
                     <div className="flex items-start justify-between rounded-md border border-muted bg-muted/20 p-3">
                       <div className="pr-4">
-                        <p className="text-sm font-medium">Enable provider mode</p>
+                        <p className="text-sm font-medium">Enable Clinic Mode</p>
                         <p className="text-xs text-muted-foreground">
                           When enabled, you can manage a provider list that appears on the review request form.
                         </p>
