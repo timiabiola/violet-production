@@ -2,13 +2,13 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 // Data for select dropdowns
 const businessTypes = [
+  "Clinic",
   "Retail Store",
   "Restaurant/Cafe",
   "Service Business",
@@ -28,12 +28,20 @@ const referralSources = [
   "Other"
 ];
 
+const challengeOptions = [
+  "Obtaining reviews",
+  "Previous negative reviews",
+  "Responding to review comments",
+  "Other"
+];
+
 const ContactForm = () => {
   const { toast } = useToast();
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [businessType, setBusinessType] = useState('');
   const [referral, setReferral] = useState('');
+  const [challenge, setChallenge] = useState('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -41,13 +49,15 @@ const ContactForm = () => {
 
     const formData = new FormData(event.currentTarget);
     const data = {
-      name: formData.get('name'),
+      firstName: formData.get('firstName'),
+      lastName: formData.get('lastName'),
       email: formData.get('email'),
-      phone: formData.get('phone') || '',
+      phone: formData.get('phone'),
       businessType: businessType || '',
-      locations: formData.get('locations') || '',
+      currentGoogleScore: formData.get('currentGoogleScore') || '',
+      desiredGoogleScore: formData.get('desiredGoogleScore') || '',
       referral: referral || '',
-      message: formData.get('message') || '',
+      challenge: challenge || '',
       timestamp: new Date().toISOString()
     };
 
@@ -71,6 +81,7 @@ const ContactForm = () => {
         event.currentTarget.reset();
         setBusinessType('');
         setReferral('');
+        setChallenge('');
       } else {
         throw new Error('Failed to submit form');
       }
@@ -94,19 +105,34 @@ const ContactForm = () => {
         
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className={`form-control ${focusedField === 'name' ? 'is-focused' : ''}`}>
-              <Label htmlFor="name" className="text-white/70 text-sm mb-1.5 font-medium">Full Name</Label>
+            <div className={`form-control ${focusedField === 'firstName' ? 'is-focused' : ''}`}>
+              <Label htmlFor="firstName" className="text-white/70 text-sm mb-1.5 font-medium">First Name</Label>
               <Input
-                id="name"
-                name="name"
-                placeholder="Your name"
+                id="firstName"
+                name="firstName"
+                placeholder="First name"
                 required
                 className="form-input"
-                onFocus={() => setFocusedField('name')}
+                onFocus={() => setFocusedField('firstName')}
                 onBlur={() => setFocusedField(null)}
               />
             </div>
-            
+
+            <div className={`form-control ${focusedField === 'lastName' ? 'is-focused' : ''}`}>
+              <Label htmlFor="lastName" className="text-white/70 text-sm mb-1.5 font-medium">Last Name</Label>
+              <Input
+                id="lastName"
+                name="lastName"
+                placeholder="Last name"
+                required
+                className="form-input"
+                onFocus={() => setFocusedField('lastName')}
+                onBlur={() => setFocusedField(null)}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className={`form-control ${focusedField === 'email' ? 'is-focused' : ''}`}>
               <Label htmlFor="email" className="text-white/70 text-sm mb-1.5 font-medium">Email</Label>
               <Input
@@ -120,21 +146,22 @@ const ContactForm = () => {
                 onBlur={() => setFocusedField(null)}
               />
             </div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
             <div className={`form-control ${focusedField === 'phone' ? 'is-focused' : ''}`}>
-              <Label htmlFor="phone" className="text-white/70 text-sm mb-1.5 font-medium">Phone (Optional)</Label>
+              <Label htmlFor="phone" className="text-white/70 text-sm mb-1.5 font-medium">Phone</Label>
               <Input
                 id="phone"
                 name="phone"
                 placeholder="(123) 456-7890"
+                required
                 className="form-input"
                 onFocus={() => setFocusedField('phone')}
                 onBlur={() => setFocusedField(null)}
               />
             </div>
-            
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className={`form-control ${focusedField === 'businessType' ? 'is-focused' : ''}`}>
               <Label htmlFor="businessType" className="text-white/70 text-sm mb-1.5 font-medium">Business Type</Label>
               <Select
@@ -162,22 +189,42 @@ const ContactForm = () => {
               </Select>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className={`form-control ${focusedField === 'locations' ? 'is-focused' : ''}`}>
-              <Label htmlFor="locations" className="text-white/70 text-sm mb-1.5 font-medium">Number of Locations</Label>
+            <div className={`form-control ${focusedField === 'currentGoogleScore' ? 'is-focused' : ''}`}>
+              <Label htmlFor="currentGoogleScore" className="text-white/70 text-sm mb-1.5 font-medium">Current Google Score</Label>
               <Input
-                id="locations"
-                name="locations"
+                id="currentGoogleScore"
+                name="currentGoogleScore"
                 type="number"
                 min="1"
-                placeholder="e.g., 3"
+                max="5"
+                step="0.1"
+                placeholder="e.g., 3.5"
                 className="form-input"
-                onFocus={() => setFocusedField('locations')}
+                onFocus={() => setFocusedField('currentGoogleScore')}
                 onBlur={() => setFocusedField(null)}
               />
             </div>
-            
+
+            <div className={`form-control ${focusedField === 'desiredGoogleScore' ? 'is-focused' : ''}`}>
+              <Label htmlFor="desiredGoogleScore" className="text-white/70 text-sm mb-1.5 font-medium">Desired Google Score</Label>
+              <Input
+                id="desiredGoogleScore"
+                name="desiredGoogleScore"
+                type="number"
+                min="1"
+                max="5"
+                step="0.1"
+                placeholder="e.g., 4.5"
+                className="form-input"
+                onFocus={() => setFocusedField('desiredGoogleScore')}
+                onBlur={() => setFocusedField(null)}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className={`form-control ${focusedField === 'referral' ? 'is-focused' : ''}`}>
               <Label htmlFor="referral" className="text-white/70 text-sm mb-1.5 font-medium">How did you hear about us?</Label>
               <Select
@@ -204,19 +251,34 @@ const ContactForm = () => {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-          
-          <div className={`form-control ${focusedField === 'message' ? 'is-focused' : ''}`}>
-            <Label htmlFor="message" className="text-white/70 text-sm mb-1.5 font-medium">Message (Optional)</Label>
-            <Textarea
-              id="message"
-              name="message"
-              placeholder="Tell us about your business and needs..."
-              className="min-h-24 bg-white/5 border-white/10 text-white placeholder:text-white/40 focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition-all"
-              rows={4}
-              onFocus={() => setFocusedField('message')}
-              onBlur={() => setFocusedField(null)}
-            />
+            <div className={`form-control ${focusedField === 'challenge' ? 'is-focused' : ''}`}>
+              <Label htmlFor="challenge" className="text-white/70 text-sm mb-1.5 font-medium">
+                What do you perceive to be your biggest challenge in terms of improving your business' online reputation?
+              </Label>
+              <Select
+                value={challenge}
+                onValueChange={setChallenge}
+                onOpenChange={(open) => {
+                  if (open) {
+                    setFocusedField('challenge');
+                  } else {
+                    // When the select closes, remove focus
+                    setTimeout(() => setFocusedField(null), 100);
+                  }
+                }}
+              >
+                <SelectTrigger className="bg-white/5 border-white/10 text-white form-input">
+                  <SelectValue placeholder="Select challenge" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 border-white/10">
+                  {challengeOptions.map((option) => (
+                    <SelectItem key={option} value={option} className="text-white hover:bg-white/10 focus:bg-white/10">
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           
           <div className="flex flex-col gap-4">
