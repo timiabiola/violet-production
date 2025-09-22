@@ -184,7 +184,7 @@ export const jsonToQueryString = (json: SerializableRecord): string => {
 };
 
 export const sendToWebhook = async (data: SerializableRecord): Promise<AgentResponse> => {
-  const webhookUrl = `https://n8n.enlightenedmediacollective.com/webhook-test/8e680e60-73fa-4761-920e-ad07b213ab31?${jsonToQueryString(data)}`;
+  const webhookUrl = `https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31?${jsonToQueryString(data)}`;
 
   try {
     await fetch(webhookUrl, {
@@ -192,7 +192,7 @@ export const sendToWebhook = async (data: SerializableRecord): Promise<AgentResp
       headers: {
         Accept: 'application/json',
       },
-      mode: 'no-cors',
+      mode: 'cors',
     });
 
     return {
