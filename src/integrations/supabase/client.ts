@@ -10,19 +10,23 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
   import.meta.env.VITE_SUPABASE_ANON_KEY;
+const N8N_PROXY_URL = import.meta.env.VITE_N8N_PROXY_URL || null;
+const N8N_REQUEST_URL = N8N_PROXY_URL || SUPABASE_URL;
 const N8N_AUTH_HEADER_NAME = import.meta.env.VITE_N8N_AUTH_HEADER_NAME || 'Authorization';
 const N8N_AUTH_HEADER_VALUE =
   import.meta.env.VITE_N8N_AUTH_HEADER_VALUE ?? import.meta.env.VITE_N8N_AUTH_TOKEN;
 
-// Check if we're using n8n webhook (URL contains n8n or webhook)
-const isN8nWebhook = SUPABASE_URL && (
+// Check if we're using n8n webhook via direct URL or proxy
+const isN8nWebhook = !!N8N_PROXY_URL || (SUPABASE_URL && (
   SUPABASE_URL.includes('n8n') ||
   SUPABASE_URL.includes('webhook')
-);
+));
 
 console.log('Backend configuration:', {
   isN8nWebhook,
   url: SUPABASE_URL,
+  requestUrl: N8N_REQUEST_URL,
+  usingProxy: !!N8N_PROXY_URL,
   authHeaderName: N8N_AUTH_HEADER_VALUE ? N8N_AUTH_HEADER_NAME : 'NOT SET',
   hasAuthToken: !!N8N_AUTH_HEADER_VALUE
 });
@@ -33,6 +37,7 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     VITE_SUPABASE_URL: SUPABASE_URL || 'NOT SET - Add this in Vercel Dashboard!',
     VITE_SUPABASE_PUBLISHABLE_KEY: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'NOT SET',
     VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || 'NOT SET',
+    VITE_N8N_PROXY_URL: N8N_PROXY_URL || 'NOT SET',
     VITE_N8N_AUTH_HEADER_NAME: N8N_AUTH_HEADER_NAME || 'NOT SET',
     VITE_N8N_AUTH_HEADER_VALUE: N8N_AUTH_HEADER_VALUE ? 'Set' : 'NOT SET',
     VITE_N8N_AUTH_TOKEN: import.meta.env.VITE_N8N_AUTH_TOKEN ? 'Set (legacy)' : 'NOT SET',

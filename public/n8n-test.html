@@ -83,7 +83,9 @@
 
     <script type="module">
         // Get environment variables
-        const ENV_URL = import.meta?.env?.VITE_SUPABASE_URL || '';
+        const ENV_DIRECT_URL = import.meta?.env?.VITE_SUPABASE_URL || '';
+        const ENV_PROXY_URL = import.meta?.env?.VITE_N8N_PROXY_URL || '';
+        const REQUEST_URL = ENV_PROXY_URL || ENV_DIRECT_URL;
         const ENV_HEADER_NAME = import.meta?.env?.VITE_N8N_AUTH_HEADER_NAME || 'Authorization';
         const ENV_HEADER_VALUE = (import.meta?.env?.VITE_N8N_AUTH_HEADER_VALUE ?? import.meta?.env?.VITE_N8N_AUTH_TOKEN) || '';
 
@@ -93,14 +95,16 @@
         // Display configuration
         document.getElementById('config').innerHTML = `
             <pre>
-URL from env: ${ENV_URL || 'NOT SET'}
+Target URL: ${REQUEST_URL || 'NOT SET'}
+Proxy URL: ${ENV_PROXY_URL || 'NOT SET'}
+Direct URL: ${ENV_DIRECT_URL || 'NOT SET'}
 Header Name from env: ${ENV_HEADER_VALUE ? ENV_HEADER_NAME : 'NOT SET'}
 Header Value from env: ${ENV_HEADER_VALUE ? 'SET (hidden)' : 'NOT SET'}
             </pre>
         `;
 
         function resolveUrl() {
-            return document.getElementById('webhookUrl').value || ENV_URL;
+            return document.getElementById('webhookUrl').value || REQUEST_URL;
         }
 
         function resolveHeaderName() {
@@ -211,8 +215,8 @@ Header Value from env: ${ENV_HEADER_VALUE ? 'SET (hidden)' : 'NOT SET'}
         };
 
         // Auto-fill placeholders to show current env values
-        if (ENV_URL) {
-            document.getElementById('webhookUrl').placeholder = `Current: ${ENV_URL}`;
+        if (REQUEST_URL) {
+            document.getElementById('webhookUrl').placeholder = `Current: ${REQUEST_URL}`;
         }
         if (ENV_HEADER_NAME && ENV_HEADER_VALUE) {
             headerNameInput.placeholder = `Current: ${ENV_HEADER_NAME}`;

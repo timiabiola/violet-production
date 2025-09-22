@@ -1,7 +1,8 @@
 // n8n Webhook Client
 // This client handles communication with n8n webhooks instead of Supabase
 
-const N8N_WEBHOOK_URL = import.meta.env.VITE_SUPABASE_URL;
+const N8N_PROXY_URL = import.meta.env.VITE_N8N_PROXY_URL;
+const N8N_WEBHOOK_URL = N8N_PROXY_URL || import.meta.env.VITE_SUPABASE_URL || 'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31';
 const N8N_AUTH_HEADER_NAME = import.meta.env.VITE_N8N_AUTH_HEADER_NAME || 'Authorization';
 const N8N_AUTH_HEADER_VALUE =
   import.meta.env.VITE_N8N_AUTH_HEADER_VALUE ?? import.meta.env.VITE_N8N_AUTH_TOKEN;
@@ -22,8 +23,9 @@ export class N8nClient {
 
     console.log('N8n client initialized:', {
       url: this.baseUrl,
+      usingProxy: !!N8N_PROXY_URL,
       authHeaderName: this.authHeaderValue ? this.authHeaderName : 'NOT SET',
-      hasAuth: !!this.authHeaderValue
+      hasAuth: !N8N_PROXY_URL && !!this.authHeaderValue
     });
   }
 
@@ -43,8 +45,8 @@ export class N8nClient {
 
     const headers: Record<string, string> = {};
 
-    // Add authorization header if configured
-    if (this.authHeaderValue) {
+    // Add authorization header if configured and we're not proxying
+    if (!N8N_PROXY_URL && this.authHeaderValue) {
       headers[this.authHeaderName] = this.authHeaderValue;
     }
 
@@ -56,7 +58,7 @@ export class N8nClient {
     console.log('Making n8n request:', {
       url,
       method,
-      hasAuth: !!this.authHeaderValue,
+      hasAuth: !N8N_PROXY_URL && !!this.authHeaderValue,
       authHeaderName: this.authHeaderValue ? this.authHeaderName : 'NOT SET',
       data: method === 'GET' ? 'in URL params' : data
     });
