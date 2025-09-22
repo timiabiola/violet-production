@@ -13,7 +13,7 @@ const SUPABASE_ANON_KEY =
 // Detailed debugging
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error('Missing Supabase environment variables:', {
-    VITE_SUPABASE_URL: SUPABASE_URL || 'NOT SET',
+    VITE_SUPABASE_URL: SUPABASE_URL || 'NOT SET - Add this in Vercel Dashboard!',
     VITE_SUPABASE_PUBLISHABLE_KEY: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'NOT SET',
     VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || 'NOT SET',
     allEnvKeys: Object.keys(import.meta.env),
@@ -21,7 +21,11 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     PROD: import.meta.env.PROD,
     DEV: import.meta.env.DEV
   });
-  throw new Error('Missing Supabase environment variables. Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set in your Vercel environment variables.');
+
+  // Provide clear instructions in the console
+  console.error('📍 TO FIX: Add VITE_SUPABASE_URL in Vercel Dashboard → Settings → Environment Variables');
+
+  throw new Error('Missing VITE_SUPABASE_URL. Add it in Vercel Dashboard → Settings → Environment Variables');
 }
 
 // Import the supabase client like this:
