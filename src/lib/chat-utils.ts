@@ -186,24 +186,27 @@ export const jsonToQueryString = (json: SerializableRecord): string => {
 export const sendToWebhook = async (data: SerializableRecord): Promise<AgentResponse> => {
   // Use the configured webhook URL from environment
   const baseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31';
-  const authToken = import.meta.env.VITE_N8N_AUTH_TOKEN;
+  const authHeaderName = import.meta.env.VITE_N8N_AUTH_HEADER_NAME || 'Authorization';
+  const authHeaderValue =
+    import.meta.env.VITE_N8N_AUTH_HEADER_VALUE ?? import.meta.env.VITE_N8N_AUTH_TOKEN;
 
   const webhookUrl = `${baseUrl}?${jsonToQueryString(data)}`;
 
   console.log('Sending to webhook:', {
     url: webhookUrl,
-    hasAuth: !!authToken,
+    authHeaderName: authHeaderValue ? authHeaderName : 'NOT SET',
+    hasAuth: !!authHeaderValue,
     data
   });
 
   try {
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Accept': 'application/json',
     };
 
     // Add authorization header if available
-    if (authToken) {
-      headers['Authorization'] = authToken;
+    if (authHeaderValue) {
+      headers[authHeaderName] = authHeaderValue;
     }
 
     const response = await fetch(webhookUrl, {

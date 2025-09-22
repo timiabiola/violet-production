@@ -2,15 +2,19 @@
 // This client handles communication with n8n webhooks instead of Supabase
 
 const N8N_WEBHOOK_URL = import.meta.env.VITE_SUPABASE_URL;
-const N8N_AUTH_TOKEN = import.meta.env.VITE_N8N_AUTH_TOKEN;
+const N8N_AUTH_HEADER_NAME = import.meta.env.VITE_N8N_AUTH_HEADER_NAME || 'Authorization';
+const N8N_AUTH_HEADER_VALUE =
+  import.meta.env.VITE_N8N_AUTH_HEADER_VALUE ?? import.meta.env.VITE_N8N_AUTH_TOKEN;
 
 export class N8nClient {
   private baseUrl: string;
-  private authToken: string | undefined;
+  private authHeaderName: string;
+  private authHeaderValue: string | undefined;
 
   constructor() {
     this.baseUrl = N8N_WEBHOOK_URL;
-    this.authToken = N8N_AUTH_TOKEN;
+    this.authHeaderName = N8N_AUTH_HEADER_NAME;
+    this.authHeaderValue = N8N_AUTH_HEADER_VALUE || undefined;
 
     if (!this.baseUrl) {
       throw new Error('N8N webhook URL is not configured');
@@ -18,7 +22,8 @@ export class N8nClient {
 
     console.log('N8n client initialized:', {
       url: this.baseUrl,
-      hasAuth: !!this.authToken
+      authHeaderName: this.authHeaderValue ? this.authHeaderName : 'NOT SET',
+      hasAuth: !!this.authHeaderValue
     });
   }
 
@@ -36,11 +41,11 @@ export class N8nClient {
       url += `?${params.toString()}`;
     }
 
-    const headers: HeadersInit = {};
+    const headers: Record<string, string> = {};
 
-    // Add authorization header if token is available
-    if (this.authToken) {
-      headers['Authorization'] = this.authToken;
+    // Add authorization header if configured
+    if (this.authHeaderValue) {
+      headers[this.authHeaderName] = this.authHeaderValue;
     }
 
     // Only add Content-Type for POST requests
@@ -51,7 +56,8 @@ export class N8nClient {
     console.log('Making n8n request:', {
       url,
       method,
-      hasAuth: !!headers['Authorization'],
+      hasAuth: !!this.authHeaderValue,
+      authHeaderName: this.authHeaderValue ? this.authHeaderName : 'NOT SET',
       data: method === 'GET' ? 'in URL params' : data
     });
 

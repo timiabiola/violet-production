@@ -68,7 +68,8 @@
     <div>
         <h2>Manual Configuration (Optional)</h2>
         <input type="text" id="webhookUrl" placeholder="Webhook URL (leave empty to use env variable)">
-        <input type="text" id="authToken" placeholder="Authorization Token (leave empty to use env variable)">
+        <input type="text" id="headerName" placeholder="Header Name (leave empty to use env variable)">
+        <input type="text" id="headerValue" placeholder="Header Value (leave empty to use env variable)">
     </div>
 
     <h2>Test Actions</h2>
@@ -83,191 +84,41 @@
     <script type="module">
         // Get environment variables
         const ENV_URL = import.meta?.env?.VITE_SUPABASE_URL || '';
-        const ENV_TOKEN = import.meta?.env?.VITE_N8N_AUTH_TOKEN || '';
+        const ENV_HEADER_NAME = import.meta?.env?.VITE_N8N_AUTH_HEADER_NAME || 'Authorization';
+        const ENV_HEADER_VALUE = (import.meta?.env?.VITE_N8N_AUTH_HEADER_VALUE ?? import.meta?.env?.VITE_N8N_AUTH_TOKEN) || '';
+
+        const headerNameInput = document.getElementById('headerName');
+        const headerValueInput = document.getElementById('headerValue');
 
         // Display configuration
         document.getElementById('config').innerHTML = `
             <pre>
 URL from env: ${ENV_URL || 'NOT SET'}
-Auth Token from env: ${ENV_TOKEN ? 'SET (hidden)' : 'NOT SET'}
+Header Name from env: ${ENV_HEADER_VALUE ? ENV_HEADER_NAME : 'NOT SET'}
+Header Value from env: ${ENV_HEADER_VALUE ? 'SET (hidden)' : 'NOT SET'}
             </pre>
         `;
 
-        // Make functions global
-        window.testBasicConnection = async function() {
-            const url = document.getElementById('webhookUrl').value || ENV_URL;
+        function resolveUrl() {
+            return document.getElementById('webhookUrl').value || ENV_URL;
+        }
 
-            if (!url) {
-                addResult('error', 'No webhook URL configured!');
-                return;
+        function resolveHeaderName() {
+            return headerNameInput.value || (ENV_HEADER_VALUE ? ENV_HEADER_NAME : '');
+        }
+
+        function resolveHeaderValue() {
+            return headerValueInput.value || ENV_HEADER_VALUE;
+        }
+
+        function buildHeaders() {
+            const name = resolveHeaderName();
+            const value = resolveHeaderValue();
+            if (!name || !value) {
+                return {};
             }
-
-            addResult('info', `Testing GET connection to: ${url}`);
-
-            try {
-                // Build URL with query parameters
-                const params = new URLSearchParams({
-                    test: 'true',
-                    timestamp: new Date().toISOString(),
-                    message: 'Basic connection test without auth'
-                });
-                const fullUrl = `${url}?${params.toString()}`;
-
-                const response = await fetch(fullUrl, {
-                    method: 'GET',
-                    mode: 'cors'
-                });
-
-                addResult('success', `Response Status: ${response.status} ${response.statusText}`);
-
-                const text = await response.text();
-                addResult('info', `Response Body: ${text || '(empty)'}`);
-
-                if (response.headers.get('content-type')?.includes('application/json')) {
-                    try {
-                        const json = JSON.parse(text);
-                        addResult('success', 'JSON Response: ' + JSON.stringify(json, null, 2));
-                    } catch (e) {
-                        // Not JSON
-                    }
-                }
-            } catch (error) {
-                addResult('error', `Connection Error: ${error.message}`);
-                console.error('Full error:', error);
-            }
-        };
-
-        window.testWithAuth = async function() {
-            const url = document.getElementById('webhookUrl').value || ENV_URL;
-            const token = document.getElementById('authToken').value || ENV_TOKEN;
-
-            if (!url) {
-                addResult('error', 'No webhook URL configured!');
-                return;
-            }
-
-            addResult('info', `Testing GET with auth to: ${url}`);
-            addResult('info', `Using Authorization: ${token ? 'YES' : 'NO'}`);
-
-            try {
-                // Build URL with query parameters
-                const params = new URLSearchParams({
-                    test: 'true',
-                    timestamp: new Date().toISOString(),
-                    message: 'Connection test WITH authorization',
-                    hasAuth: token ? 'true' : 'false'
-                });
-                const fullUrl = `${url}?${params.toString()}`;
-
-                const headers = {};
-                if (token) {
-                    headers['Authorization'] = token;
-                }
-
-                const response = await fetch(fullUrl, {
-                    method: 'GET',
-                    headers,
-                    mode: 'cors'
-                });
-
-                addResult('success', `Response Status: ${response.status} ${response.statusText}`);
-
-                const text = await response.text();
-                addResult('info', `Response Body: ${text || '(empty)'}`);
-
-                if (response.headers.get('content-type')?.includes('application/json')) {
-                    try {
-                        const json = JSON.parse(text);
-                        addResult('success', 'JSON Response: ' + JSON.stringify(json, null, 2));
-                    } catch (e) {
-                        // Not JSON
-                    }
-                }
-            } catch (error) {
-                addResult('error', `Connection Error: ${error.message}`);
-                console.error('Full error:', error);
-            }
-        };
-
-        window.testSignIn = async function() {
-            const url = document.getElementById('webhookUrl').value || ENV_URL;
-            const token = document.getElementById('authToken').value || ENV_TOKEN;
-
-            if (!url) {
-                addResult('error', 'No webhook URL configured!');
-                return;
-            }
-
-            addResult('info', `Testing sign in via GET to: ${url}`);
-
-            try {
-                // Build URL with query parameters
-                const params = new URLSearchParams({
-                    action: 'signin',
-                    email: 'test@example.com',
-                    password: 'testpassword'
-                });
-                const fullUrl = `${url}?${params.toString()}`;
-
-                const headers = {};
-                if (token) {
-                    headers['Authorization'] = token;
-                }
-
-                const response = await fetch(fullUrl, {
-                    method: 'GET',
-                    headers,
-                    mode: 'cors'
-                });
-
-                addResult('success', `Response Status: ${response.status} ${response.statusText}`);
-
-                const text = await response.text();
-                addResult('info', `Response Body: ${text || '(empty)'}`);
-            } catch (error) {
-                addResult('error', `Sign In Error: ${error.message}`);
-            }
-        };
-
-        window.testDataQuery = async function() {
-            const url = document.getElementById('webhookUrl').value || ENV_URL;
-            const token = document.getElementById('authToken').value || ENV_TOKEN;
-
-            if (!url) {
-                addResult('error', 'No webhook URL configured!');
-                return;
-            }
-
-            addResult('info', `Testing data query via GET to: ${url}`);
-
-            try {
-                // Build URL with query parameters
-                const params = new URLSearchParams({
-                    action: 'query',
-                    table: 'reviews',
-                    filters: '{}'
-                });
-                const fullUrl = `${url}?${params.toString()}`;
-
-                const headers = {};
-                if (token) {
-                    headers['Authorization'] = token;
-                }
-
-                const response = await fetch(fullUrl, {
-                    method: 'GET',
-                    headers,
-                    mode: 'cors'
-                });
-
-                addResult('success', `Response Status: ${response.status} ${response.statusText}`);
-
-                const text = await response.text();
-                addResult('info', `Response Body: ${text || '(empty)'}`);
-            } catch (error) {
-                addResult('error', `Query Error: ${error.message}`);
-            }
-        };
+            return { [name]: value };
+        }
 
         function addResult(type, message) {
             const results = document.getElementById('results');
@@ -278,9 +129,94 @@ Auth Token from env: ${ENV_TOKEN ? 'SET (hidden)' : 'NOT SET'}
             results.insertBefore(div, results.firstChild);
         }
 
-        // Auto-fill URL if available
+        async function performRequest(description, queryParams) {
+            const url = resolveUrl();
+            if (!url) {
+                addResult('error', 'No webhook URL configured!');
+                return null;
+            }
+
+            addResult('info', `${description} ${url}`);
+            const headers = buildHeaders();
+            if (Object.keys(headers).length) {
+                const headerName = Object.keys(headers)[0];
+                addResult('info', `Using ${headerName} header`);
+            } else {
+                addResult('info', 'No authorization header');
+            }
+
+            try {
+                const params = new URLSearchParams(queryParams);
+                const fullUrl = `${url}?${params.toString()}`;
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
+                    headers,
+                    mode: 'cors'
+                });
+
+                addResult('success', `Response Status: ${response.status} ${response.statusText}`);
+
+                const text = await response.text();
+                addResult('info', `Response Body: ${text || '(empty)'}`);
+
+                if (response.headers.get('content-type')?.includes('application/json')) {
+                    try {
+                        const json = JSON.parse(text);
+                        addResult('success', 'JSON Response: ' + JSON.stringify(json, null, 2));
+                    } catch (_) {
+                        // response not JSON
+                    }
+                }
+
+                return response;
+            } catch (error) {
+                addResult('error', `Request Error: ${error.message}`);
+                console.error('Full error:', error);
+                return null;
+            }
+        }
+
+        // Make functions global
+        window.testBasicConnection = async function() {
+            await performRequest('Testing GET connection to:', {
+                test: 'true',
+                timestamp: new Date().toISOString(),
+                message: 'Basic connection test without auth'
+            });
+        };
+
+        window.testWithAuth = async function() {
+            await performRequest('Testing GET with auth to:', {
+                test: 'true',
+                timestamp: new Date().toISOString(),
+                message: 'Connection test WITH authorization',
+                hasAuth: resolveHeaderValue() ? 'true' : 'false'
+            });
+        };
+
+        window.testSignIn = async function() {
+            await performRequest('Testing sign in via GET to:', {
+                action: 'signin',
+                email: 'test@example.com',
+                password: 'testpassword'
+            });
+        };
+
+        window.testDataQuery = async function() {
+            await performRequest('Testing data query via GET to:', {
+                action: 'query',
+                table: 'reviews',
+                filters: '{}'
+            });
+        };
+
+        // Auto-fill placeholders to show current env values
         if (ENV_URL) {
             document.getElementById('webhookUrl').placeholder = `Current: ${ENV_URL}`;
+        }
+        if (ENV_HEADER_NAME && ENV_HEADER_VALUE) {
+            headerNameInput.placeholder = `Current: ${ENV_HEADER_NAME}`;
+            headerValueInput.placeholder = 'Current: (hidden value)';
         }
     </script>
 </body>

@@ -10,7 +10,9 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY =
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
   import.meta.env.VITE_SUPABASE_ANON_KEY;
-const N8N_AUTH_TOKEN = import.meta.env.VITE_N8N_AUTH_TOKEN;
+const N8N_AUTH_HEADER_NAME = import.meta.env.VITE_N8N_AUTH_HEADER_NAME || 'Authorization';
+const N8N_AUTH_HEADER_VALUE =
+  import.meta.env.VITE_N8N_AUTH_HEADER_VALUE ?? import.meta.env.VITE_N8N_AUTH_TOKEN;
 
 // Check if we're using n8n webhook (URL contains n8n or webhook)
 const isN8nWebhook = SUPABASE_URL && (
@@ -21,7 +23,8 @@ const isN8nWebhook = SUPABASE_URL && (
 console.log('Backend configuration:', {
   isN8nWebhook,
   url: SUPABASE_URL,
-  hasAuthToken: !!N8N_AUTH_TOKEN
+  authHeaderName: N8N_AUTH_HEADER_VALUE ? N8N_AUTH_HEADER_NAME : 'NOT SET',
+  hasAuthToken: !!N8N_AUTH_HEADER_VALUE
 });
 
 // Detailed debugging
@@ -30,7 +33,9 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     VITE_SUPABASE_URL: SUPABASE_URL || 'NOT SET - Add this in Vercel Dashboard!',
     VITE_SUPABASE_PUBLISHABLE_KEY: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'NOT SET',
     VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY || 'NOT SET',
-    VITE_N8N_AUTH_TOKEN: N8N_AUTH_TOKEN ? 'Set' : 'NOT SET',
+    VITE_N8N_AUTH_HEADER_NAME: N8N_AUTH_HEADER_NAME || 'NOT SET',
+    VITE_N8N_AUTH_HEADER_VALUE: N8N_AUTH_HEADER_VALUE ? 'Set' : 'NOT SET',
+    VITE_N8N_AUTH_TOKEN: import.meta.env.VITE_N8N_AUTH_TOKEN ? 'Set (legacy)' : 'NOT SET',
     allEnvKeys: Object.keys(import.meta.env),
     MODE: import.meta.env.MODE,
     PROD: import.meta.env.PROD,
