@@ -192,7 +192,7 @@ export const sendToWebhook = async (data: SerializableRecord): Promise<AgentResp
       headers: {
         Accept: 'application/json',
       },
-      mode: 'cors',
+      mode: 'no-cors',
     });
 
     return {
