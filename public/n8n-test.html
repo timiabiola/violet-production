@@ -102,20 +102,20 @@ Auth Token from env: ${ENV_TOKEN ? 'SET (hidden)' : 'NOT SET'}
                 return;
             }
 
-            addResult('info', `Testing connection to: ${url}`);
+            addResult('info', `Testing GET connection to: ${url}`);
 
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    mode: 'cors',
-                    body: JSON.stringify({
-                        test: true,
-                        timestamp: new Date().toISOString(),
-                        message: 'Basic connection test without auth'
-                    })
+                // Build URL with query parameters
+                const params = new URLSearchParams({
+                    test: 'true',
+                    timestamp: new Date().toISOString(),
+                    message: 'Basic connection test without auth'
+                });
+                const fullUrl = `${url}?${params.toString()}`;
+
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
+                    mode: 'cors'
                 });
 
                 addResult('success', `Response Status: ${response.status} ${response.statusText}`);
@@ -146,28 +146,28 @@ Auth Token from env: ${ENV_TOKEN ? 'SET (hidden)' : 'NOT SET'}
                 return;
             }
 
-            addResult('info', `Testing with auth to: ${url}`);
+            addResult('info', `Testing GET with auth to: ${url}`);
             addResult('info', `Using Authorization: ${token ? 'YES' : 'NO'}`);
 
             try {
-                const headers = {
-                    'Content-Type': 'application/json',
-                };
+                // Build URL with query parameters
+                const params = new URLSearchParams({
+                    test: 'true',
+                    timestamp: new Date().toISOString(),
+                    message: 'Connection test WITH authorization',
+                    hasAuth: token ? 'true' : 'false'
+                });
+                const fullUrl = `${url}?${params.toString()}`;
 
+                const headers = {};
                 if (token) {
                     headers['Authorization'] = token;
                 }
 
-                const response = await fetch(url, {
-                    method: 'POST',
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
                     headers,
-                    mode: 'cors',
-                    body: JSON.stringify({
-                        test: true,
-                        timestamp: new Date().toISOString(),
-                        message: 'Connection test WITH authorization',
-                        hasAuth: !!token
-                    })
+                    mode: 'cors'
                 });
 
                 addResult('success', `Response Status: ${response.status} ${response.statusText}`);
@@ -198,26 +198,26 @@ Auth Token from env: ${ENV_TOKEN ? 'SET (hidden)' : 'NOT SET'}
                 return;
             }
 
-            addResult('info', `Testing sign in to: ${url}`);
+            addResult('info', `Testing sign in via GET to: ${url}`);
 
             try {
-                const headers = {
-                    'Content-Type': 'application/json',
-                };
+                // Build URL with query parameters
+                const params = new URLSearchParams({
+                    action: 'signin',
+                    email: 'test@example.com',
+                    password: 'testpassword'
+                });
+                const fullUrl = `${url}?${params.toString()}`;
 
+                const headers = {};
                 if (token) {
                     headers['Authorization'] = token;
                 }
 
-                const response = await fetch(url, {
-                    method: 'POST',
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
                     headers,
-                    mode: 'cors',
-                    body: JSON.stringify({
-                        action: 'signin',
-                        email: 'test@example.com',
-                        password: 'testpassword'
-                    })
+                    mode: 'cors'
                 });
 
                 addResult('success', `Response Status: ${response.status} ${response.statusText}`);
@@ -238,26 +238,26 @@ Auth Token from env: ${ENV_TOKEN ? 'SET (hidden)' : 'NOT SET'}
                 return;
             }
 
-            addResult('info', `Testing data query to: ${url}`);
+            addResult('info', `Testing data query via GET to: ${url}`);
 
             try {
-                const headers = {
-                    'Content-Type': 'application/json',
-                };
+                // Build URL with query parameters
+                const params = new URLSearchParams({
+                    action: 'query',
+                    table: 'reviews',
+                    filters: '{}'
+                });
+                const fullUrl = `${url}?${params.toString()}`;
 
+                const headers = {};
                 if (token) {
                     headers['Authorization'] = token;
                 }
 
-                const response = await fetch(url, {
-                    method: 'POST',
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
                     headers,
-                    mode: 'cors',
-                    body: JSON.stringify({
-                        action: 'query',
-                        table: 'reviews',
-                        filters: {}
-                    })
+                    mode: 'cors'
                 });
 
                 addResult('success', `Response Status: ${response.status} ${response.statusText}`);

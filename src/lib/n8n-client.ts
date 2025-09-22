@@ -22,31 +22,52 @@ export class N8nClient {
     });
   }
 
-  private async makeRequest(endpoint: string, options: RequestInit = {}) {
-    const url = `${this.baseUrl}${endpoint ? `/${endpoint}` : ''}`;
+  private async makeRequest(endpoint: string, data: any = {}, method: string = 'GET') {
+    // For GET requests, convert data to query parameters
+    let url = `${this.baseUrl}${endpoint ? `/${endpoint}` : ''}`;
 
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    };
+    if (method === 'GET' && data && Object.keys(data).length > 0) {
+      const params = new URLSearchParams();
+      Object.keys(data).forEach(key => {
+        if (data[key] !== undefined && data[key] !== null) {
+          params.append(key, typeof data[key] === 'object' ? JSON.stringify(data[key]) : data[key]);
+        }
+      });
+      url += `?${params.toString()}`;
+    }
+
+    const headers: HeadersInit = {};
 
     // Add authorization header if token is available
     if (this.authToken) {
       headers['Authorization'] = this.authToken;
     }
 
+    // Only add Content-Type for POST requests
+    if (method === 'POST') {
+      headers['Content-Type'] = 'application/json';
+    }
+
     console.log('Making n8n request:', {
       url,
-      method: options.method || 'GET',
-      hasAuth: !!headers['Authorization']
+      method,
+      hasAuth: !!headers['Authorization'],
+      data: method === 'GET' ? 'in URL params' : data
     });
 
     try {
-      const response = await fetch(url, {
-        ...options,
+      const fetchOptions: RequestInit = {
+        method,
         headers,
         mode: 'cors', // Enable CORS
-      });
+      };
+
+      // Only add body for POST requests
+      if (method === 'POST' && data) {
+        fetchOptions.body = JSON.stringify(data);
+      }
+
+      const response = await fetch(url, fetchOptions);
 
       console.log('n8n response status:', response.status);
 
@@ -74,88 +95,64 @@ export class N8nClient {
   // Auth methods (adapting to n8n webhook)
   async signIn(email: string, password: string) {
     return this.makeRequest('', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'signin',
-        email,
-        password
-      })
-    });
+      action: 'signin',
+      email,
+      password
+    }, 'GET');
   }
 
   async signUp(email: string, password: string) {
     return this.makeRequest('', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'signup',
-        email,
-        password
-      })
-    });
+      action: 'signup',
+      email,
+      password
+    }, 'GET');
   }
 
   async signOut() {
     return this.makeRequest('', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'signout'
-      })
-    });
+      action: 'signout'
+    }, 'GET');
   }
 
   async getUser() {
     return this.makeRequest('', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'getUser'
-      })
-    });
+      action: 'getUser'
+    }, 'GET');
   }
 
   // Data methods
   async query(table: string, filters?: any) {
     return this.makeRequest('', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'query',
-        table,
-        filters
-      })
-    });
+      action: 'query',
+      table,
+      filters: filters ? JSON.stringify(filters) : undefined
+    }, 'GET');
   }
 
   async insert(table: string, data: any) {
     return this.makeRequest('', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'insert',
-        table,
-        data
-      })
-    });
+      action: 'insert',
+      table,
+      data: JSON.stringify(data)
+    }, 'GET');
   }
 
   async update(table: string, id: string, data: any) {
     return this.makeRequest('', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'update',
-        table,
-        id,
-        data
-      })
-    });
+      action: 'update',
+      table,
+      id,
+      data: JSON.stringify(data)
+    }, 'GET');
   }
 
   async delete(table: string, id: string) {
     return this.makeRequest('', {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'delete',
-        table,
-        id
-      })
-    });
+      action: 'delete',
+      table,
+      id
+    }, 'GET');
   }
 
   // Test connection
@@ -163,12 +160,9 @@ export class N8nClient {
     console.log('Testing n8n connection...');
     try {
       const response = await this.makeRequest('', {
-        method: 'POST',
-        body: JSON.stringify({
-          action: 'test',
-          timestamp: new Date().toISOString()
-        })
-      });
+        action: 'test',
+        timestamp: new Date().toISOString()
+      }, 'GET');
       console.log('n8n connection test successful:', response);
       return response;
     } catch (error) {
