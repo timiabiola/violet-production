@@ -81,41 +81,73 @@ const createN8nSupabaseAdapter = () => {
       }
     },
     from: (table: string) => ({
-      select: async (columns?: string) => {
-        try {
-          const data = await n8nClient.query(table, { columns });
-          return { data, error: null };
-        } catch (error) {
-          return { data: null, error };
-        }
-      },
-      insert: async (data: any) => {
-        try {
-          const result = await n8nClient.insert(table, data);
-          return { data: result, error: null };
-        } catch (error) {
-          return { data: null, error };
-        }
-      },
-      update: async (data: any) => ({
-        eq: async (column: string, value: any) => {
-          try {
-            const result = await n8nClient.update(table, value, data);
-            return { data: result, error: null };
-          } catch (error) {
-            return { data: null, error };
+      select: (columns?: string) => {
+        const chainable = {
+          promise: null as any,
+          then: function(onfulfilled?: any, onrejected?: any) {
+            if (!this.promise) {
+              this.promise = n8nClient.query(table, { columns })
+                .then((data: any) => ({ data, error: null }))
+                .catch((error: any) => {
+                  console.error(`n8n query error for table ${table}:`, error);
+                  return { data: null, error: { message: error.message || 'Query failed' } };
+                });
+            }
+            return this.promise.then(onfulfilled, onrejected);
           }
-        }
+        };
+        return chainable;
+      },
+      insert: (data: any) => {
+        const chainable = {
+          promise: null as any,
+          select: function() {
+            // For insert().select() pattern
+            return this;
+          },
+          then: function(onfulfilled?: any, onrejected?: any) {
+            if (!this.promise) {
+              console.log(`n8n insert request for table ${table}:`, data);
+              this.promise = n8nClient.insert(table, data)
+                .then((result: any) => {
+                  console.log(`n8n insert success for table ${table}:`, result);
+                  return { data: result, error: null };
+                })
+                .catch((error: any) => {
+                  console.error(`n8n insert error for table ${table}:`, error);
+                  return { data: null, error: { message: error.message || 'Insert failed' } };
+                });
+            }
+            return this.promise.then(onfulfilled, onrejected);
+          }
+        };
+        return chainable;
+      },
+      update: (data: any) => ({
+        eq: (column: string, value: any) => ({
+          then: function(onfulfilled?: any, onrejected?: any) {
+            return n8nClient.update(table, value, data)
+              .then((result: any) => ({ data: result, error: null }))
+              .catch((error: any) => {
+                console.error(`n8n update error for table ${table}:`, error);
+                return { data: null, error: { message: error.message || 'Update failed' } };
+              })
+              .then(onfulfilled, onrejected);
+          }
+        })
       }),
-      delete: async () => ({
-        eq: async (column: string, value: any) => {
-          try {
-            await n8nClient.delete(table, value);
-            return { error: null };
-          } catch (error) {
-            return { error };
+      delete: () => ({
+        eq: (column: string, value: any) => ({
+          then: function(onfulfilled?: any, onrejected?: any) {
+            return n8nClient.delete(table, value)
+              .then(() => ({ error: null }))
+              .catch((error: any) => {
+                console.error(`n8n delete error for table ${table}:`, error);
+                return { error: { message: error.message || 'Delete failed' } };
+              })
+              .then(onfulfilled, onrejected);
           }
-        }
+        })
       })
     })
   };

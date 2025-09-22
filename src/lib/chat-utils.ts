@@ -184,27 +184,56 @@ export const jsonToQueryString = (json: SerializableRecord): string => {
 };
 
 export const sendToWebhook = async (data: SerializableRecord): Promise<AgentResponse> => {
-  const webhookUrl = `https://n8n.enlightenedmediacollective.com/webhook-test/8e680e60-73fa-4761-920e-ad07b213ab31?${jsonToQueryString(data)}`;
+  // Use the configured webhook URL from environment
+  const baseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31';
+  const authToken = import.meta.env.VITE_N8N_AUTH_TOKEN;
+
+  const webhookUrl = `${baseUrl}?${jsonToQueryString(data)}`;
+
+  console.log('Sending to webhook:', {
+    url: webhookUrl,
+    hasAuth: !!authToken,
+    data
+  });
 
   try {
-    await fetch(webhookUrl, {
+    const headers: HeadersInit = {
+      'Accept': 'application/json',
+    };
+
+    // Add authorization header if available
+    if (authToken) {
+      headers['Authorization'] = authToken;
+    }
+
+    const response = await fetch(webhookUrl, {
       method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-      mode: 'no-cors',
+      headers,
+      mode: 'cors', // Changed from 'no-cors' to 'cors' to allow reading response
     });
+
+    console.log('Webhook response:', {
+      status: response.status,
+      statusText: response.statusText
+    });
+
+    if (!response.ok) {
+      throw new Error(`Webhook responded with ${response.status}: ${response.statusText}`);
+    }
+
+    const responseText = await response.text();
+    console.log('Webhook response body:', responseText);
 
     return {
       output: 'Success',
-      reply: 'Thank you for your submission!',
+      reply: 'Thank you! Your review request has been sent successfully.',
     };
   } catch (error) {
     console.error('Error sending data to webhook:', error);
 
     return {
       output: 'Local Success',
-      reply: "Your request was saved locally. We'll try to submit it again later.",
+      reply: "Your request was saved locally. We'll process it shortly.",
     };
   }
 };
