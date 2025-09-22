@@ -164,6 +164,9 @@ const SessionForm: React.FC<SessionFormProps> = ({ onFormSuccess }) => {
       }
 
       const session = await ensureActiveSession();
+      const requestUniqueKey = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `${session.session_uuid}-${Date.now()}`;
 
       const sanitizedFormData: SessionFormData = {
         clientFirstName: formValues.clientFirstName,
@@ -188,7 +191,7 @@ const SessionForm: React.FC<SessionFormProps> = ({ onFormSuccess }) => {
           patient_name: sanitizedFormData.clientFirstName,
           phone_number: sanitizedFormData.phoneNumber,
           created_by: user.id,
-          unique_key: session.session_uuid,
+          unique_key: requestUniqueKey,
           status: "sent",
           sent_at: new Date().toISOString(),
         };
