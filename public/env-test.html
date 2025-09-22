@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Environment Variables Test</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Environment Variables Check</h1>
+    <p>This page tests if environment variables are properly loaded in production.</p>
+
+    <div id="results"></div>
+
+    <script type="module">
+        const results = document.getElementById('results');
+
+        // Check if we can access import.meta.env
+        try {
+            const env = import.meta?.env || {};
+
+            const requiredVars = [
+                'VITE_SUPABASE_URL',
+                'VITE_SUPABASE_PUBLISHABLE_KEY'
+            ];
+
+            let html = '<h2>Environment Status:</h2>';
+
+            requiredVars.forEach(varName => {
+                const value = env[varName];
+                if (value) {
+                    html += `<div class="status success">✅ ${varName}: Set (${value.substring(0, 20)}...)</div>`;
+                } else {
+                    html += `<div class="status error">❌ ${varName}: NOT SET</div>`;
+                }
+            });
+
+            html += '<h3>All VITE_ variables:</h3><pre>';
+            Object.keys(env).filter(k => k.startsWith('VITE_')).forEach(key => {
+                html += `${key}: ${env[key] ? 'Set' : 'Not set'}\n`;
+            });
+            html += '</pre>';
+
+            html += '<h3>Full import.meta.env:</h3>';
+            html += '<pre>' + JSON.stringify(env, null, 2) + '</pre>';
+
+            results.innerHTML = html;
+        } catch (error) {
+            results.innerHTML = `<div class="status error">Error: ${error.message}</div>`;
+        }
+    </script>
+</body>
+</html>

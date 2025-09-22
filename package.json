@@ -5,12 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "echo 'Starting build...' && node scripts/check-env.js && vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "check-env": "node scripts/check-env.js",
-    "prebuild": "node scripts/check-env.js || echo 'Warning: Environment variables not configured'"
+    "check-env": "node scripts/check-env.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
