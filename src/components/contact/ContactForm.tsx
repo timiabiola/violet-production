@@ -18,16 +18,6 @@ const businessTypes = [
   "Other"
 ];
 
-const referralSources = [
-  "Google Search",
-  "Social Media",
-  "Professional Referral",
-  "Conference/Event",
-  "Advertisement",
-  "Word of Mouth",
-  "Other"
-];
-
 const challengeOptions = [
   "Obtaining reviews",
   "Previous negative reviews",
@@ -40,7 +30,6 @@ const ContactForm = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [businessType, setBusinessType] = useState('');
-  const [referral, setReferral] = useState('');
   const [challenge, setChallenge] = useState('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -53,10 +42,9 @@ const ContactForm = () => {
       lastName: formData.get('lastName'),
       email: formData.get('email'),
       phone: formData.get('phone'),
-      businessType: businessType || '',
       currentGoogleScore: formData.get('currentGoogleScore') || '',
       desiredGoogleScore: formData.get('desiredGoogleScore') || '',
-      referral: referral || '',
+      businessType: businessType || '',
       challenge: challenge || '',
       timestamp: new Date().toISOString()
     };
@@ -80,7 +68,6 @@ const ContactForm = () => {
         // Reset form
         event.currentTarget.reset();
         setBusinessType('');
-        setReferral('');
         setChallenge('');
       } else {
         throw new Error('Failed to submit form');
@@ -162,35 +149,6 @@ const ContactForm = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className={`form-control ${focusedField === 'businessType' ? 'is-focused' : ''}`}>
-              <Label htmlFor="businessType" className="text-white/70 text-sm mb-1.5 font-medium">Business Type</Label>
-              <Select
-                value={businessType}
-                onValueChange={setBusinessType}
-                onOpenChange={(open) => {
-                  if (open) {
-                    setFocusedField('businessType');
-                  } else {
-                    // When the select closes, remove focus
-                    setTimeout(() => setFocusedField(null), 100);
-                  }
-                }}
-              >
-                <SelectTrigger className="bg-white/5 border-white/10 text-white form-input">
-                  <SelectValue placeholder="Select business type" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-white/10">
-                  {businessTypes.map((type) => (
-                    <SelectItem key={type} value={type} className="text-white hover:bg-white/10 focus:bg-white/10">
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className={`form-control ${focusedField === 'currentGoogleScore' ? 'is-focused' : ''}`}>
               <Label htmlFor="currentGoogleScore" className="text-white/70 text-sm mb-1.5 font-medium">Current Google Score</Label>
               <Input
@@ -225,14 +183,14 @@ const ContactForm = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className={`form-control ${focusedField === 'referral' ? 'is-focused' : ''}`}>
-              <Label htmlFor="referral" className="text-white/70 text-sm mb-1.5 font-medium">How did you hear about us?</Label>
+            <div className={`form-control ${focusedField === 'businessType' ? 'is-focused' : ''}`}>
+              <Label htmlFor="businessType" className="text-white/70 text-sm mb-1.5 font-medium">Business Type</Label>
               <Select
-                value={referral}
-                onValueChange={setReferral}
+                value={businessType}
+                onValueChange={setBusinessType}
                 onOpenChange={(open) => {
                   if (open) {
-                    setFocusedField('referral');
+                    setFocusedField('businessType');
                   } else {
                     // When the select closes, remove focus
                     setTimeout(() => setFocusedField(null), 100);
@@ -240,12 +198,12 @@ const ContactForm = () => {
                 }}
               >
                 <SelectTrigger className="bg-white/5 border-white/10 text-white form-input">
-                  <SelectValue placeholder="Select source" />
+                  <SelectValue placeholder="Select business type" />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-900 border-white/10">
-                  {referralSources.map((source) => (
-                    <SelectItem key={source} value={source} className="text-white hover:bg-white/10 focus:bg-white/10">
-                      {source}
+                  {businessTypes.map((type) => (
+                    <SelectItem key={type} value={type} className="text-white hover:bg-white/10 focus:bg-white/10">
+                      {type}
                     </SelectItem>
                   ))}
                 </SelectContent>
