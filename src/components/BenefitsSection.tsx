@@ -19,7 +19,7 @@ const benefits = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    title: "Win Customer Trust Before They Walk In",
+    title: "Win Trust Before They Walk In",
     description: "Your stellar reviews become your best sales team, convincing hesitant customers to choose you over competitors. 9 out of 10 customers check reviews before visiting - make sure they love what they see.",
     stat: "90% of customers read reviews first"
   },
