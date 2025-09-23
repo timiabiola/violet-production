@@ -23,23 +23,23 @@ const Feature = ({ title, description, animationDelay }: FeatureProps) => (
 const ContactFeatureList = () => {
   const features = [
     {
-      title: "Business Specialized:",
-      description: "Built for retail, restaurants, services, and all customer-facing businesses.",
+      title: "Works for Your Business:",
+      description: "Whether you're a clinic, restaurant, retail store, or service provider - we've got you covered.",
       animationDelay: "0.2s"
     },
     {
-      title: "Privacy Focused:",
-      description: "We prioritize customer privacy and data security in all our features.",
+      title: "Your Customers Are Protected:",
+      description: "Their information stays safe and secure, building trust from the very first interaction.",
       animationDelay: "0.3s"
     },
     {
-      title: "Staff-Friendly:",
-      description: "Minimal training required with our intuitive two-field form design.",
+      title: "Your Team Will Love It:",
+      description: "So simple, your staff can start collecting reviews in seconds - no training needed.",
       animationDelay: "0.4s"
     },
     {
-      title: "Results Driven:",
-      description: "Businesses using Violet see an average 300% increase in positive Google reviews.",
+      title: "See Results Within Weeks:",
+      description: "Watch your rating climb and new customers arrive - up to 18% revenue growth from better reviews.",
       animationDelay: "0.5s"
     }
   ];

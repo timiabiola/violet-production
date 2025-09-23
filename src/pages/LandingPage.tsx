@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import BenefitsSection from '@/components/BenefitsSection';
+import WhatThisMeansSection from '@/components/WhatThisMeansSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import ContactSection from '@/components/contact/ContactSection';
@@ -14,6 +15,7 @@ const LandingPage = () => {
       <main>
         <HeroSection />
         <BenefitsSection />
+        <WhatThisMeansSection />
         <HowItWorksSection />
         <FeaturesSection />
         <ContactSection />

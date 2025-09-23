@@ -77,16 +77,16 @@ const HeroSection = () => {
               animationDelay: "0.5s"
             }}>
                 <div className="text-center">
-                  
-                  
+                  <div className="text-2xl font-bold text-violet-400">More Calls</div>
+                  <div className="text-sm text-gray-400">From better visibility</div>
                 </div>
                 <div className="text-center">
-                  
-                  
+                  <div className="text-2xl font-bold text-violet-400">Higher Revenue</div>
+                  <div className="text-sm text-gray-400">From trusted reviews</div>
                 </div>
                 <div className="text-center sm:col-span-1 col-span-2">
-                  
-                  
+                  <div className="text-2xl font-bold text-violet-400">Top Results</div>
+                  <div className="text-sm text-gray-400">Where customers click</div>
                 </div>
               </div>
             </div>

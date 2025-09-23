@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head><title>Direct Webhook Test</title></head>
+<body>
+<h1>Direct Webhook Test</h1>
+<button onclick="testDirectFetch()">Test Direct Fetch</button>
+<button onclick="testCorsMode()">Test CORS Mode</button>
+<button onclick="testNoCorsMode()">Test No-CORS Mode</button>
+<div id="results"></div>
+
+<script>
+function log(msg) {
+  document.getElementById('results').innerHTML += '<div>' + new Date().toISOString() + ': ' + msg + '</div>';
+  console.log(msg);
+}
+
+async function testDirectFetch() {
+  const url = 'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31?test=direct&timestamp=' + Date.now();
+  log('Testing direct fetch to: ' + url);
+  
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    log('Response status: ' + response.status);
+    const text = await response.text();
+    log('Response body: ' + text);
+  } catch (error) {
+    log('ERROR: ' + error.message);
+  }
+}
+
+async function testCorsMode() {
+  const url = 'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31?test=cors&timestamp=' + Date.now();
+  log('Testing CORS mode to: ' + url);
+  
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    log('Response status: ' + response.status);
+    const text = await response.text();
+    log('Response body: ' + text);
+  } catch (error) {
+    log('ERROR: ' + error.message);
+  }
+}
+
+async function testNoCorsMode() {
+  const url = 'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31?test=nocors&timestamp=' + Date.now();
+  log('Testing no-cors mode to: ' + url);
+  
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      mode: 'no-cors',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+    log('Response type: ' + response.type + ', Status: ' + response.status);
+    // Note: Can't read body in no-cors mode
+    log('Request sent (no-cors mode prevents reading response)');
+  } catch (error) {
+    log('ERROR: ' + error.message);
+  }
+}
+</script>
+</body>
+</html>

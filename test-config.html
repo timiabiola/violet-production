@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Configuration Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+        button { margin: 10px; padding: 10px; }
+        #results { margin-top: 20px; border: 1px solid #ccc; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Violet Production - Configuration Test</h1>
+
+    <div>
+        <button onclick="testSupabaseConnection()">Test Supabase Connection</button>
+        <button onclick="testWebhookWithAuth()">Test n8n Webhook with Auth</button>
+        <button onclick="testFullFlow()">Test Full Review Request Flow</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        window.log = function(msg, type = 'info') {
+            const timestamp = new Date().toISOString();
+            const className = type;
+            document.getElementById('results').innerHTML +=
+                `<div class="${className}">${timestamp}: ${msg}</div>`;
+            console.log(msg);
+        };
+
+        window.testSupabaseConnection = async function() {
+            log('Testing Supabase connection...', 'info');
+
+            const supabaseUrl = 'https://yvwpwaiuacxidiikzkwh.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2d3B3YWl1YWN4aWRpaWt6a3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MjMyNDQsImV4cCI6MjA3NDA5OTI0NH0.Xyyf3ozUTW6EyKpiniae_Kitemu2_AA8ue42JuXysSs';
+
+            try {
+                const supabase = createClient(supabaseUrl, supabaseKey);
+
+                // Test auth
+                const { data: authData, error: authError } = await supabase.auth.getSession();
+                if (authError) {
+                    log(`Auth check failed: ${authError.message}`, 'error');
+                } else {
+                    log('Auth check successful', 'success');
+                }
+
+                // Test database connection
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('count', { count: 'exact', head: true });
+
+                if (error) {
+                    log(`Database test failed: ${error.message}`, 'error');
+                } else {
+                    log('Supabase database connection successful!', 'success');
+                }
+            } catch (e) {
+                log(`Supabase connection error: ${e.message}`, 'error');
+            }
+        };
+
+        window.testWebhookWithAuth = async function() {
+            log('Testing n8n webhook with authorization...', 'info');
+
+            const webhookUrl = 'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31';
+            const testData = {
+                test: 'true',
+                timestamp: Date.now(),
+                client_first_name: 'Test',
+                phone_number: '555-TEST-001'
+            };
+
+            const queryString = Object.entries(testData)
+                .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
+                .join('&');
+
+            const fullUrl = `${webhookUrl}?${queryString}`;
+
+            log(`Sending GET request to: ${fullUrl}`, 'info');
+
+            try {
+                // Test with authorization header
+                const response = await fetch(fullUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'sivjir-jahmo4-Wibgor'
+                    },
+                    mode: 'no-cors'
+                });
+
+                log('Webhook request sent successfully (no-cors mode, can\'t read response)', 'success');
+                log('Check n8n workflow for incoming data with auth header', 'info');
+            } catch (error) {
+                log(`Webhook error: ${error.message}`, 'error');
+            }
+        };
+
+        window.testFullFlow = async function() {
+            log('Testing full review request flow...', 'info');
+
+            // Step 1: Initialize Supabase client
+            const supabaseUrl = 'https://yvwpwaiuacxidiikzkwh.supabase.co';
+            const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2d3B3YWl1YWN4aWRpaWt6a3doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1MjMyNDQsImV4cCI6MjA3NDA5OTI0NH0.Xyyf3ozUTW6EyKpiniae_Kitemu2_AA8ue42JuXysSs';
+
+            const supabase = createClient(supabaseUrl, supabaseKey);
+
+            // Step 2: Create session data
+            const sessionData = {
+                session_uuid: 'test-' + crypto.randomUUID(),
+                user_id: null, // Will work for anon
+                payload: {
+                    clientFirstName: 'Test User',
+                    phoneNumber: '555-0123',
+                    clinicMode: false
+                }
+            };
+
+            try {
+                // Step 3: Try to save to Supabase (may fail due to auth/RLS)
+                log('Attempting to save session to Supabase...', 'info');
+                const { data: sessionResult, error: sessionError } = await supabase
+                    .from('session_records')
+                    .insert(sessionData)
+                    .select()
+                    .single();
+
+                if (sessionError) {
+                    log(`Session save failed (expected if not authenticated): ${sessionError.message}`, 'info');
+                } else {
+                    log('Session saved to Supabase successfully', 'success');
+                }
+
+                // Step 4: Send to n8n webhook regardless
+                log('Sending to n8n webhook...', 'info');
+                const webhookUrl = 'https://n8n.enlightenedmediacollective.com/webhook/8e680e60-73fa-4761-920e-ad07b213ab31';
+                const webhookData = {
+                    uuid: sessionData.session_uuid,
+                    client_first_name: sessionData.payload.clientFirstName,
+                    phone_number: sessionData.payload.phoneNumber,
+                    clinic_mode: 'off',
+                    test_run: 'true',
+                    timestamp: new Date().toISOString()
+                };
+
+                const queryString = Object.entries(webhookData)
+                    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
+                    .join('&');
+
+                await fetch(`${webhookUrl}?${queryString}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': 'sivjir-jahmo4-Wibgor'
+                    },
+                    mode: 'no-cors'
+                });
+
+                log('Full flow completed! Check n8n for the webhook data.', 'success');
+
+            } catch (error) {
+                log(`Full flow error: ${error.message}`, 'error');
+            }
+        };
+
+        // Auto-run tests on load
+        setTimeout(() => {
+            log('Configuration test page loaded. Click buttons to test each component.', 'info');
+        }, 100);
+    </script>
+</body>
+</html>

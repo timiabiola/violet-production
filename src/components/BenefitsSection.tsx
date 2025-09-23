@@ -9,8 +9,9 @@ const benefits = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
     ),
-    title: "Boost Google Visibility",
-    description: "Increase your business's online visibility through higher Google rankings and improved local search presence, making it easier for potential customers to find you."
+    title: "Get Found First by Your Customers",
+    description: "When customers search for businesses like yours, you'll appear at the top of local results where most clicks happen. Businesses in top positions receive over double the customer calls and visits.",
+    stat: "2x more customer actions"
   },
   {
     icon: (
@@ -18,8 +19,9 @@ const benefits = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    title: "Build Trust & Credibility",
-    description: "Establish unwavering trust with prospective customers through consistent engagement and authentic reviews that showcase your commitment to exceptional service."
+    title: "Win Customer Trust Before They Walk In",
+    description: "Your stellar reviews become your best sales team, convincing hesitant customers to choose you over competitors. 9 out of 10 customers check reviews before visiting - make sure they love what they see.",
+    stat: "90% of customers read reviews first"
   },
   {
     icon: (
@@ -27,8 +29,9 @@ const benefits = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
       </svg>
     ),
-    title: "Drive Business Growth",
-    description: "Convert more website visitors into actual customers, leveraging positive reviews and testimonials to encourage referrals and grow your business sustainably."
+    title: "Turn Reviews Into Revenue",
+    description: "Watch as more browsers become buyers and happy customers bring their friends. Each star increase in your rating can mean nearly half more customers taking action - calling, visiting, or purchasing.",
+    stat: "44% more customer conversions per star"
   }
 ];
 
@@ -60,9 +63,14 @@ const BenefitsSection = () => {
                   <h3 className="text-xl font-bold font-heading mb-3 text-white">
                     {benefit.title}
                   </h3>
-                  <p className="text-gray-300">
+                  <p className="text-gray-300 mb-4">
                     {benefit.description}
                   </p>
+                  <div className="pt-4 border-t border-violet-600/20">
+                    <span className="text-sm font-semibold text-violet-400">
+                      {benefit.stat}
+                    </span>
+                  </div>
                 </CardContent>
               </Card>
             </div>
