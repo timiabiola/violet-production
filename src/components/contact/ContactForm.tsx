@@ -211,7 +211,7 @@ const ContactForm = () => {
             </div>
             <div className={`form-control ${focusedField === 'challenge' ? 'is-focused' : ''}`}>
               <Label htmlFor="challenge" className="text-white/70 text-sm mb-1.5 font-medium">
-                What do you perceive to be your biggest challenge in terms of improving your business' online reputation?
+                What's your #1 challenge in terms of improving your online reputation?
               </Label>
               <Select
                 value={challenge}
