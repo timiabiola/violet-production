@@ -184,7 +184,9 @@ const ContactForm = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className={`form-control ${focusedField === 'businessType' ? 'is-focused' : ''}`}>
-              <Label htmlFor="businessType" className="text-white/70 text-sm mb-1.5 font-medium">Business Type</Label>
+              <Label htmlFor="businessType" className="text-white/70 text-sm mb-1.5 font-medium h-10 flex items-start">
+                Business Type
+              </Label>
               <Select
                 value={businessType}
                 onValueChange={setBusinessType}
@@ -210,8 +212,8 @@ const ContactForm = () => {
               </Select>
             </div>
             <div className={`form-control ${focusedField === 'challenge' ? 'is-focused' : ''}`}>
-              <Label htmlFor="challenge" className="text-white/70 text-sm mb-1.5 font-medium">
-                What's your #1 challenge in terms of improving your online reputation?
+              <Label htmlFor="challenge" className="text-white/70 text-sm mb-1.5 font-medium h-10 flex items-start">
+                Your #1 Online Reputation Challenge
               </Label>
               <Select
                 value={challenge}
