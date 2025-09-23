@@ -213,7 +213,7 @@ const ContactForm = () => {
             </div>
             <div className={`form-control ${focusedField === 'challenge' ? 'is-focused' : ''}`}>
               <Label htmlFor="challenge" className="text-white/70 text-sm mb-1.5 font-medium h-10 flex items-start">
-                Your #1 Online Reputation Challenge
+                What's your #1 online reputation challenge?
               </Label>
               <Select
                 value={challenge}
