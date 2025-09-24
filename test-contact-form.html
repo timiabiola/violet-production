@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Webhook Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-btn {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .test-btn:hover {
+            background: #7c3aed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            background: #f0f0f0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .payload {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Form Webhook Test</h1>
+        <p>Testing webhook endpoint: <code>https://services.leadconnectorhq.com/hooks/vuoXllweQOW5Mxsn8raO/webhook-trigger/4db700b6-a04d-403b-946c-9108ba479976</code></p>
+
+        <button class="test-btn" onclick="testWithSampleData()">Test with Sample Data</button>
+        <button class="test-btn" onclick="testWithCompleteData()">Test with Complete Data</button>
+        <button class="test-btn" onclick="testWithMinimalData()">Test with Minimal Data</button>
+
+        <div id="payload" class="payload" style="display:none;">
+            <h3>Payload being sent:</h3>
+            <pre id="payloadContent"></pre>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const webhookUrl = 'https://services.leadconnectorhq.com/hooks/vuoXllweQOW5Mxsn8raO/webhook-trigger/4db700b6-a04d-403b-946c-9108ba479976';
+
+        async function sendWebhook(data) {
+            const resultDiv = document.getElementById('result');
+            const payloadDiv = document.getElementById('payload');
+            const payloadContent = document.getElementById('payloadContent');
+
+            // Show payload
+            payloadDiv.style.display = 'block';
+            payloadContent.textContent = JSON.stringify(data, null, 2);
+
+            resultDiv.innerHTML = '<div class="result">Sending request...</div>';
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const responseText = await response.text();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h3>✅ Success!</h3>
+                            <p>Status: ${response.status}</p>
+                            <p>Response: ${responseText || 'No response body'}</p>
+                            <p>All form fields were sent successfully:</p>
+                            <ul>
+                                ${Object.entries(data).map(([key, value]) =>
+                                    `<li><strong>${key}:</strong> ${value}</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h3>❌ Error</h3>
+                            <p>Status: ${response.status}</p>
+                            <p>Response: ${responseText}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h3>❌ Network Error</h3>
+                        <p>${error.message}</p>
+                        <p>Note: If you see a CORS error, the data may still have been sent successfully. Check your webhook logs.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function testWithSampleData() {
+            const data = {
+                firstName: 'John',
+                lastName: 'Doe',
+                email: 'john.doe@example.com',
+                phone: '(555) 123-4567',
+                currentGoogleScore: '3.5',
+                desiredGoogleScore: '4.8',
+                businessType: 'Restaurant/Cafe',
+                challenge: 'Obtaining reviews',
+                timestamp: new Date().toISOString()
+            };
+            sendWebhook(data);
+        }
+
+        function testWithCompleteData() {
+            const data = {
+                firstName: 'Jane',
+                lastName: 'Smith',
+                email: 'jane.smith@business.com',
+                phone: '(555) 987-6543',
+                currentGoogleScore: '2.8',
+                desiredGoogleScore: '4.5',
+                businessType: 'Clinic',
+                challenge: 'Previous negative reviews',
+                timestamp: new Date().toISOString()
+            };
+            sendWebhook(data);
+        }
+
+        function testWithMinimalData() {
+            const data = {
+                firstName: 'Bob',
+                lastName: 'Johnson',
+                email: 'bob@email.com',
+                phone: '(555) 555-5555',
+                currentGoogleScore: '',
+                desiredGoogleScore: '',
+                businessType: '',
+                challenge: '',
+                timestamp: new Date().toISOString()
+            };
+            sendWebhook(data);
+        }
+    </script>
+</body>
+</html>
