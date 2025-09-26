@@ -21,15 +21,27 @@ const Auth = () => {
 
   // Redirect if user is already logged in
   useEffect(() => {
-    if (user) {
-      // Check if user needs onboarding
+    // Check if this is an email confirmation callback
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const isEmailConfirmation = hashParams.get('type') === 'email' ||
+                               hashParams.get('type') === 'signup' ||
+                               hashParams.get('type') === 'recovery' ||
+                               hashParams.get('type') === 'magiclink';
+
+    // If this is an email confirmation, redirect to the callback handler
+    if (isEmailConfirmation && window.location.hash) {
+      navigate(`/auth/callback${window.location.hash}`);
+      return;
+    }
+
+    if (user && !isEmailConfirmation) {
+      // Only redirect if not coming from email confirmation
       checkOnboardingStatus();
     }
   }, [user, navigate]);
 
   const checkOnboardingStatus = async () => {
-    // Check will be implemented after creating onboarding context
-    // For now, redirect to review-form
+    // Redirect existing users to their dashboard
     navigate('/review-form');
   };
 
