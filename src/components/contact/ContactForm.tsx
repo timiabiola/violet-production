@@ -465,7 +465,7 @@ const ContactForm = () => {
                   Submitting...
                 </>
               ) : (
-                'Start Free Trial'
+                'Request Information'
               )}
             </Button>
             <p className="text-sm text-gray-400 text-center">
