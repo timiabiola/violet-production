@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOnboarding } from '@/contexts/OnboardingContext';
 import { Card } from '@/components/ui/card';
@@ -19,10 +20,18 @@ const AuthCallback: React.FC = () => {
         // Give Supabase time to process the confirmation
         setMessage('Verifying your account...');
 
-        // Wait a moment for auth state to update
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Check for session directly from Supabase
+        const { data: { session }, error } = await supabase.auth.getSession();
 
-        if (user) {
+        if (error) {
+          console.error('Error getting session:', error);
+          throw error;
+        }
+
+        // Wait a bit more for auth state to fully propagate
+        await new Promise(resolve => setTimeout(resolve, 1500));
+
+        if (session || user) {
           setMessage('Checking your profile...');
 
           // Check if user needs onboarding
