@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Mail, CheckCircle, ExternalLink } from 'lucide-react';
+import { Mail, CheckCircle } from 'lucide-react';
 import ParticleBackground from '@/components/ParticleBackground';
 
 interface EmailConfirmationModalProps {
@@ -10,35 +10,6 @@ interface EmailConfirmationModalProps {
 }
 
 const EmailConfirmationModal: React.FC<EmailConfirmationModalProps> = ({ email, onClose }) => {
-  const handleCheckEmail = () => {
-    // Try to open email client
-    const emailProviders: { [key: string]: string } = {
-      'gmail.com': 'https://mail.google.com',
-      'yahoo.com': 'https://mail.yahoo.com',
-      'outlook.com': 'https://outlook.live.com',
-      'hotmail.com': 'https://outlook.live.com',
-      'icloud.com': 'https://www.icloud.com/mail',
-      'aol.com': 'https://mail.aol.com',
-      'protonmail.com': 'https://mail.protonmail.com',
-      'proton.me': 'https://mail.protonmail.com',
-    };
-
-    // Extract domain from email
-    const domain = email.split('@')[1]?.toLowerCase();
-    const emailUrl = emailProviders[domain];
-
-    if (emailUrl) {
-      window.open(emailUrl, '_blank');
-    } else {
-      // Fallback to generic mailto
-      window.location.href = `mailto:${email}`;
-    }
-
-    // Close modal after delay
-    setTimeout(() => {
-      onClose();
-    }, 1500);
-  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -86,22 +57,11 @@ const EmailConfirmationModal: React.FC<EmailConfirmationModalProps> = ({ email, 
           {/* Actions */}
           <div className="space-y-3">
             <Button
-              onClick={handleCheckEmail}
-              size="lg"
-              className="w-full bg-violet-600 hover:bg-violet-700 text-white transition-all duration-200 transform hover:scale-[1.02] group"
-            >
-              <Mail className="mr-2 h-5 w-5" />
-              Check My Email Now
-              <ExternalLink className="ml-2 h-4 w-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-            </Button>
-
-            <Button
               onClick={onClose}
-              variant="ghost"
-              size="sm"
-              className="text-gray-400 hover:text-white transition-colors"
+              size="lg"
+              className="w-full bg-violet-600 hover:bg-violet-700 text-white transition-all duration-200 transform hover:scale-[1.02]"
             >
-              I'll check it later
+              Okay, I'll Check Now
             </Button>
           </div>
 
