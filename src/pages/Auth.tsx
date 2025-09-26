@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ParticleBackground from '@/components/ParticleBackground';
+import EmailConfirmationModal from '@/components/EmailConfirmationModal';
 import { toast } from 'sonner';
 
 const Auth = () => {
@@ -16,6 +17,8 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('signin');
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
   const { signIn, signUp, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -98,8 +101,10 @@ const Auth = () => {
 
     try {
       await signUp(email, password, fullName);
-      // After signup, switch to sign-in tab
-      setActiveTab('signin');
+      // Store the email for the modal
+      setRegisteredEmail(email);
+      // Show the email confirmation modal
+      setShowEmailModal(true);
       // Clear form fields
       setEmail('');
       setPassword('');
@@ -263,6 +268,17 @@ const Auth = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Email Confirmation Modal */}
+      {showEmailModal && (
+        <EmailConfirmationModal
+          email={registeredEmail}
+          onClose={() => {
+            setShowEmailModal(false);
+            setActiveTab('signin');
+          }}
+        />
+      )}
     </div>
   );
 };

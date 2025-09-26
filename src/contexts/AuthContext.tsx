@@ -198,10 +198,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
-      toast({
-        title: "Registration successful",
-        description: "Please check your email to confirm your account.",
-      });
+      // Modal will handle the notification, no toast needed here
     } catch (error: unknown) {
       const message = getErrorMessage(error);
       toast({
