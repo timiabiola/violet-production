@@ -86,6 +86,13 @@ const Navbar = () => {
                 Violet <span className="font-light bg-gradient-to-r from-violet-300 to-violet-400 bg-clip-text text-transparent">the Curious</span>
               </span>
             </Link>
+
+            {/* Free Trial Badge */}
+            <div className="ml-4 hidden sm:flex items-center">
+              <span className="px-3 py-1 text-xs font-medium bg-violet-600/20 text-violet-300 border border-violet-500/30 rounded-full animate-pulse-subtle">
+                7-Day Trial
+              </span>
+            </div>
           </div>
           
           <div className="hidden md:flex space-x-1 items-center">

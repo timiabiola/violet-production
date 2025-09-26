@@ -24,6 +24,8 @@ const challengeOptions = [
   "Obtaining reviews",
   "Previous negative reviews",
   "Responding to review comments",
+  "Generating warm leads",
+  "Converting leads to customers",
   "Other"
 ];
 
@@ -463,7 +465,7 @@ const ContactForm = () => {
                   Submitting...
                 </>
               ) : (
-                'Request Information'
+                'Start Free Trial'
               )}
             </Button>
             <p className="text-sm text-gray-400 text-center">

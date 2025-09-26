@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import BenefitsSection from '@/components/BenefitsSection';
+import FreeTrialSection from '@/components/FreeTrialSection';
 import WhatThisMeansSection from '@/components/WhatThisMeansSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -15,6 +16,7 @@ const LandingPage = () => {
       <main>
         <HeroSection />
         <BenefitsSection />
+        <FreeTrialSection />
         <WhatThisMeansSection />
         <HowItWorksSection />
         <FeaturesSection />

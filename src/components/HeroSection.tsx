@@ -33,29 +33,34 @@ const HeroSection = () => {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2 lg:pr-8 space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-violet-600/20 border border-violet-500/30 rounded-full mb-4 animate-fade-in">
+                <span className="text-sm font-medium text-violet-300">🎉 7-Day Free Trial</span>
+              </div>
+
               <h1 className="font-heading text-white mb-2 animate-fade-in">
                 Elevate Your <span className="text-gradient">Business</span> Online
               </h1>
-              
+
               <p className="subtitle mb-8 animate-fade-in opacity-0" style={{
               animationDelay: "0.2s"
             }}>
-                In today's digital landscape, your online reputation directly impacts 
-                customer acquisition and trust. With most consumers consulting online reviews before 
-                making a purchase decision, proactive reputation management is essential.
+                Transform your online reputation in just one week with our no-strings-attached free trial.
+                See how proactive reputation management can directly impact customer acquisition and trust,
+                driving more calls and higher revenue for your business.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in opacity-0" style={{
               animationDelay: "0.3s"
             }}>
                 {!user ? (
-                  <Button 
-                    onClick={scrollToContact}
-                    size="lg" 
-                    className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-6 rounded-md text-lg button-glow"
-                  >
-                    Get Started
-                  </Button>
+                  <Link to="/auth">
+                    <Button
+                      size="lg"
+                      className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-6 rounded-md text-lg button-glow"
+                    >
+                      Start 7-Day Free Trial
+                    </Button>
+                  </Link>
                 ) : (
                   <Link to="/dashboard">
                     <Button size="lg" className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-6 rounded-md text-lg button-glow">
@@ -72,13 +77,20 @@ const HeroSection = () => {
                 </Button>
               </div>
               
+              {/* Free Trial CTA Text */}
+              <div className="text-center sm:text-left animate-fade-in opacity-0" style={{
+              animationDelay: "0.4s"
+            }}>
+                <p className="text-sm text-gray-300">No credit card required • Cancel anytime</p>
+              </div>
+
               {/* Stats */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 animate-fade-in opacity-0" style={{
               animationDelay: "0.5s"
             }}>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-violet-400">More Calls</div>
-                  <div className="text-sm text-gray-400">From better visibility</div>
+                  <div className="text-2xl font-bold text-violet-400">7-Day Trial</div>
+                  <div className="text-sm text-gray-400">No strings attached</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-violet-400">Higher Revenue</div>
