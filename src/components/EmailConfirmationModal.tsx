@@ -61,7 +61,7 @@ const EmailConfirmationModal: React.FC<EmailConfirmationModalProps> = ({ email, 
               size="lg"
               className="w-full bg-violet-600 hover:bg-violet-700 text-white transition-all duration-200 transform hover:scale-[1.02]"
             >
-              Okay, I'll Check Now
+              Okay, Got It!
             </Button>
           </div>
 
