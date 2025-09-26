@@ -13,12 +13,14 @@ const ContactSection = () => {
         <div className="grid lg:grid-cols-2 gap-12">
           <div>
             <div className="animate-fade-in">
-              <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                Ready to <span className="text-gradient">Get Started</span>?
-              </h2>
-              <p className="text-lg text-gray-300 mb-6">
-                Enter your information below and we'll reach out to discuss how we can maximize your lead generation and conversion by improving your online reputation.
-              </p>
+              <div className="glass-card p-8 rounded-2xl border border-violet-500/20 bg-violet-900/10 backdrop-blur-sm">
+                <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 text-white">
+                  Ready to <span className="text-gradient">Get Started</span>?
+                </h2>
+                <p className="text-xl md:text-2xl text-gray-200 leading-relaxed">
+                  Enter your information below and we'll reach out to discuss how we can maximize your lead generation and conversion by improving your online reputation.
+                </p>
+              </div>
             </div>
           </div>
           
