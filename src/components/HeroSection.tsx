@@ -53,7 +53,7 @@ const HeroSection = () => {
               animationDelay: "0.3s"
             }}>
                 {!user ? (
-                  <Link to="/auth">
+                  <Link to="/auth?tab=signup">
                     <Button
                       size="lg"
                       className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-6 rounded-md text-lg button-glow"

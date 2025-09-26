@@ -77,7 +77,7 @@ const FreeTrialSection = () => {
         </div>
 
         <div className="text-center">
-          <Link to="/auth">
+          <Link to="/auth?tab=signup">
             <Button
               size="lg"
               className="bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white px-10 py-6 text-lg shadow-lg shadow-violet-900/30 hover:shadow-xl hover:shadow-violet-900/40 transition-all duration-300 button-glow"
