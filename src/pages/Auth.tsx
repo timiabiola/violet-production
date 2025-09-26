@@ -88,7 +88,6 @@ const Auth = () => {
 
     try {
       await signUp(email, password, fullName);
-      toast.success('Account created! Please check your email to verify your account.');
       // After signup, switch to sign-in tab
       setActiveTab('signin');
       // Clear form fields
