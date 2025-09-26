@@ -10,9 +10,9 @@ const ContactSection = () => {
       <div className="absolute bottom-10 right-1/4 w-72 h-72 bg-violet-800/5 rounded-full blur-3xl"></div>
       
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-2 gap-12">
-          <div>
-            <div className="animate-fade-in">
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div className="lg:sticky lg:top-1/3">
+            <div className="animate-fade-in lg:mt-20">
               <div className="glass-card p-8 rounded-2xl border border-violet-500/20 bg-violet-900/10 backdrop-blur-sm">
                 <h2 className="text-4xl md:text-5xl font-bold font-heading mb-6 text-white">
                   Ready to <span className="text-gradient">Get Started</span>?
@@ -23,7 +23,7 @@ const ContactSection = () => {
               </div>
             </div>
           </div>
-          
+
           <ContactForm />
         </div>
       </div>
