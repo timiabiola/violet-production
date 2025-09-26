@@ -136,7 +136,7 @@ const StepBusinessName: React.FC<StepBusinessNameProps> = ({
                 onBlur={() => setIsFocused(false)}
                 placeholder="Enter your business name"
                 className={`
-                  px-5 py-3 text-lg bg-white border-2 transition-all duration-300
+                  px-5 py-3 text-lg text-gray-900 bg-white border-2 transition-all duration-300 placeholder:text-gray-400
                   ${isFocused
                     ? 'border-violet-400 shadow-lg shadow-violet-200/50 scale-[1.02]'
                     : 'border-gray-200 hover:border-gray-300'
