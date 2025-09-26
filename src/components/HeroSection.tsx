@@ -44,9 +44,8 @@ const HeroSection = () => {
               <p className="subtitle mb-8 animate-fade-in opacity-0" style={{
               animationDelay: "0.2s"
             }}>
-                Transform your online reputation in just one week with our no-strings-attached free trial.
-                See how proactive reputation management can directly impact customer acquisition and trust,
-                driving more calls and higher revenue for your business.
+                Get more 5-star reviews and watch your business grow.
+                Start free today.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 animate-fade-in opacity-0" style={{
