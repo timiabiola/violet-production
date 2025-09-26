@@ -1,7 +1,5 @@
 
 import React from 'react';
-import ContactFeatureList from './ContactFeatureList';
-import ContactInfoCard from './ContactInfoCard';
 import ContactForm from './ContactForm';
 
 const ContactSection = () => {
@@ -16,15 +14,12 @@ const ContactSection = () => {
           <div>
             <div className="animate-fade-in">
               <h2 className="text-3xl md:text-4xl font-bold font-heading mb-4 text-white">
-                Ready to Turn Every Customer Into <span className="text-gradient">Your Best Advocate</span>?
+                Ready to <span className="text-gradient">Get Started</span>?
               </h2>
               <p className="text-lg text-gray-300 mb-6">
-                Join businesses that are seeing real results - more calls, more visits, more revenue - all from better reviews. Let's show you exactly what this means for your bottom line.
+                Enter your information below and we'll reach out to discuss how we can maximize your lead generation and conversion by improving your online reputation.
               </p>
             </div>
-            
-            <ContactFeatureList />
-            <ContactInfoCard />
           </div>
           
           <ContactForm />
