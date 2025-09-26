@@ -28,19 +28,11 @@ const AuthCallback: React.FC = () => {
           // Check if user needs onboarding
           const isOnboardingComplete = await checkOnboardingStatus();
 
-          if (!isOnboardingComplete) {
-            setMessage('Setting up your account...');
-            // New user - redirect to onboarding
-            setTimeout(() => {
-              navigate('/onboarding', { replace: true });
-            }, 500);
-          } else {
-            // Existing user or onboarding complete - go to dashboard
-            setMessage('Welcome back!');
-            setTimeout(() => {
-              navigate('/review-form', { replace: true });
-            }, 500);
-          }
+          // Always redirect to review-form, which will handle onboarding check
+          setMessage('Setting up your account...');
+          setTimeout(() => {
+            navigate('/review-form', { replace: true });
+          }, 500);
         } else {
           // No user found, might need to sign in again
           setMessage('Please sign in to continue...');
