@@ -288,7 +288,7 @@ const SessionForm: React.FC<SessionFormProps> = ({ onFormSuccess }) => {
           Violet the Curious
         </CardTitle>
         <CardDescription className="text-center">
-          Submit a review request for your patient
+          Submit a review request to your {profileSettings.clinicMode ? "patient" : "customer"}
         </CardDescription>
       </CardHeader>
       <CardContent>
